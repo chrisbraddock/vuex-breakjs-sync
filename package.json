@@ -11,7 +11,8 @@
     "vuex",
     "vue",
     "breakjs",
-    "breakpoints"
+    "breakpoints",
+    "media queries"
   ],
   "author": "Chris Braddock (braddock.chris@gmail.com)",
   "license": "MIT",
