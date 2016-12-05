@@ -1,8 +1,8 @@
 // defaults from http://include-media.com/documentation/#variable-breakpoints
 exports.breaks = {
-    phone: '320px',
-    tablet: '768px',
-    desktop: '1024px'
+    phone: 320,
+    tablet: 768,
+    desktop: 1024
 }
 
 exports.sync = function (store, breakjs, breaks) {
@@ -16,8 +16,7 @@ exports.sync = function (store, breakjs, breaks) {
     // record the initial breakpoint
     commit('breakpoint/BREAKPOINT_CHANGED', store.state.breakpoint.breakjs.current())
 
-    // sync store on BreakJS breakpoint change
-    store.state.breakpoint.breakjs.addChangeListener(function(breakpoint) {
+    store.state.breakpoint.breakjs.addChangeListener(function (breakpoint) {
         commit('breakpoint/BREAKPOINT_CHANGED', breakpoint)
     })
 
@@ -37,17 +36,17 @@ function patchStore (store) {
     applyMutationState(store, true);
     set(store.state, 'breakpoint', {
         breakjs: null,
-        current: null
+        current: ''
     })
     applyMutationState(store, false);
 
     var breakpointModule = {
         mutations: {
             'breakpoint/SET_BREAKJS': function (state, breakjs) {
-                store.state.breakpoint.breakjs = breakjs
+                set(store.state.breakpoint, 'breakjs', breakjs)
             },
             'breakpoint/BREAKPOINT_CHANGED': function (state, breakpoint) {
-                store.state.breakpoint.current = breakpoint
+                set(store.state.breakpoint, 'current', breakpoint)
             }
         }
     }
@@ -60,7 +59,7 @@ function patchStore (store) {
     } else {
         store.hotUpdate({
             modules: {
-                route: breakpointModule
+                breakpoint: breakpointModule
             }
         })
     }

@@ -1,6 +1,10 @@
 # vuex-breakjs-sync
 
-> Effortlessly keep [BreakJS](https://github.com/nygardk/BreakJS) and [Vuex](https://github.com/vuejs/vuex) Store in sync.
+> Effortlessly keep [BreakJS](https://github.com/nygardk/BreakJS) responsive
+> breakpoints and [Vuex](https://github.com/vuejs/vuex) Store in sync.
+
+![vuex-breakjs-sync demo](http://i.imgur.com/GMtTQgG.gif)
+
 
 ### Usage
 
@@ -18,23 +22,23 @@ sync(store, breakjs) // done.
 
 // bootstrap your app...
 ```
+### Demo 
 
-
-See a [live demo]().
+``` sh
+# run the demo from source
+git clone https://github.com/chrisbraddock/vuex-breakjs-sync
+cd vuex-breakjs-sync/demo
+npm install
+npm run dev
+```
 
 ### How does it work?
 
 - It adds a `breakpoint` module into the store, which contains the state
-representing the current breakpoint and a reference to BreakJS exposing its
-[API](https://github.com/nygardk/BreakJS#usage).
+representing the current breakpoint.
 
 ``` js
-// window width: 800px
-store.state.breakpoint.current // current breakpoint string e.g. 'tablet'
-store.state.breakpoint.breakjs.is('tablet') // true
-store.state.breakpoint.breakjs.is('desktop') // false
-store.state.breakpoint.breakjs.atLeast('tablet') // true
-store.state.breakpoint.breakjs.atMost('phone') // false
+store.state.breakpoint.current // string current breakpoint e.g. 'tablet'
 ```
 
 - When BreakJS runs callbacks on breakpoint change, the store's state is updated.
@@ -73,9 +77,7 @@ import { sync, breaks } from 'vuex-breakjs-sync'
 import store from './vuex/store'
 import breakjs from 'breakjs'
 
-breaks.push({
-    phablet: '550px'
-})
+breaks['phablet'] = 550
 
 sync(store, breakjs, breaks)
 ```
