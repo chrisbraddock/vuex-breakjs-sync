@@ -1,0 +1,26 @@
+{
+  "name": "vuex-breakjs-sync",
+  "version": "0.1.0",
+  "description": "Effortlessly keep BreakJS and Vuex Store in sync.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisbraddock/vuex-breakjs-sync.git"
+  },
+  "keywords": [
+    "vuex",
+    "vue",
+    "breakjs",
+    "breakpoints"
+  ],
+  "author": "Chris Braddock (braddock.chris@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chrisbraddock/vuex-breakjs-sync/issues"
+  },
+  "homepage": "https://github.com/chrisbraddock/vuex-breakjs-sync#readme",
+  "peerDependencies": {
+    "vuex": "^2.0.0",
+    "breakjs": "^1.0.0"
+  }
+}
