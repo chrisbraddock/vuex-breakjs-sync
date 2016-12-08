@@ -5,19 +5,36 @@ exports.breaks = {
     desktop: 1024
 }
 
+// Generate the object that will be stored on the breakpoint module
+function breakpointObj(breakjs) {
+    var breakpoint = {
+        name: breakjs.current()
+    }
+    breakjs.breakpoints.forEach(function(b) {
+        var name = b.name
+        breakpoint['is-' + name] = breakjs.is(name)
+        breakpoint['atLeast-' + name] = breakjs.atLeast(name)
+        breakpoint['atMost-' + name] = breakjs.atMost(name)
+    })
+    return breakpoint
+}
+
 exports.sync = function (store, breakjs, breaks) {
     patchStore(store)
 
     var commit = store.commit || store.dispatch
 
-    // init and store BreakJS
-    commit('breakpoint/SET_BREAKJS', breakjs(breaks || exports.breaks))
+    // Init BreakJS
+    // breakjs is only useful to use as the return
+    // value of its init function, hence overwrite it
+    breakjs = breakjs(breaks || exports.breaks)
 
-    // record the initial breakpoint
-    commit('breakpoint/BREAKPOINT_CHANGED', store.state.breakpoint.breakjs.current())
+    // Record initial breakpoint
+    commit('breakpoint/BREAKPOINT_CHANGED', breakpointObj(breakjs))
 
-    store.state.breakpoint.breakjs.addChangeListener(function (breakpoint) {
-        commit('breakpoint/BREAKPOINT_CHANGED', breakpoint)
+    // Record breakpoint on breakpoint change
+    breakjs.addChangeListener(function () {
+        commit('breakpoint/BREAKPOINT_CHANGED', breakpointObj(breakjs))
     })
 
 }
@@ -34,33 +51,19 @@ function patchStore (store) {
     // add state
     var set = store._vm.constructor.set
     applyMutationState(store, true);
-    set(store.state, 'breakpoint', {
-        breakjs: null,
-        current: ''
-    })
+    set(store.state, 'breakpoint', {})
     applyMutationState(store, false);
 
     var breakpointModule = {
         mutations: {
-            'breakpoint/SET_BREAKJS': function (state, breakjs) {
-                set(store.state.breakpoint, 'breakjs', breakjs)
-            },
             'breakpoint/BREAKPOINT_CHANGED': function (state, breakpoint) {
-                set(store.state.breakpoint, 'current', breakpoint)
+                set(store.state, 'breakpoint', breakpoint)
             }
         }
     }
 
     // add module
-    if (store.registerModule) {
-        store.registerModule('breakpoint', breakpointModule)
-    } else if (store.module) {
-        store.module('breakpoint', breakpointModule)
-    } else {
-        store.hotUpdate({
-            modules: {
-                breakpoint: breakpointModule
-            }
-        })
-    }
+    if (store.registerModule) { store.registerModule('breakpoint', breakpointModule) }
+    else if (store.module)  { store.module('breakpoint', breakpointModule) }
+    else { store.hotUpdate({ modules: {  breakpoints: breakpointModule } }) }
 }
