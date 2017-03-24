@@ -8,18 +8,34 @@ exports.breaks = {
 exports.sync = function (store, breakjs, breaks) {
     patchStore(store)
 
+    breakjs = breakjs(breaks || exports.breaks)
+
     var commit = store.commit || store.dispatch
 
-    // init and store BreakJS
-    commit('breakpoint/SET_BREAKJS', breakjs(breaks || exports.breaks))
+    function setBreak() {
+        var breakpoint = {
+            breakjs:  breakjs,
+            current:  breakjs.current(),
+            is:       {},
+            atMost:   {},
+            atLeast:  {},
+            lessThan: {},
+        }
+
+        breakjs.breakpoints.forEach((value, index, array) => {
+            breakpoint.atLeast[value.name] = breakjs.atLeast(value.name)
+            breakpoint.atMost[value.name] = breakjs.atMost(value.name)
+            breakpoint.is[value.name] = value.name === breakpoint.current
+            breakpoint.lessThan[value.name] = !breakjs.atLeast(value.name)
+        })
+
+        commit('breakpoint/BREAKPOINT_CHANGED', breakpoint)
+    }
 
     // record the initial breakpoint
-    commit('breakpoint/BREAKPOINT_CHANGED', store.state.breakpoint.breakjs.current())
+    setBreak()
 
-    store.state.breakpoint.breakjs.addChangeListener(function (breakpoint) {
-        commit('breakpoint/BREAKPOINT_CHANGED', breakpoint)
-    })
-
+    store.state.breakpoint.breakjs.addChangeListener(setBreak)
 }
 
 function applyMutationState (store, state) {
@@ -42,11 +58,8 @@ function patchStore (store) {
 
     var breakpointModule = {
         mutations: {
-            'breakpoint/SET_BREAKJS': function (state, breakjs) {
-                set(store.state.breakpoint, 'breakjs', breakjs)
-            },
             'breakpoint/BREAKPOINT_CHANGED': function (state, breakpoint) {
-                set(store.state.breakpoint, 'current', breakpoint)
+                set(store.state, 'breakpoint', breakpoint)
             }
         }
     }
