@@ -31,6 +31,7 @@
             </tr>
         </table>
 
+        <h2>state.breakpoint:</h2>
         <pre v-html="JSONHighlight(breakpoint)"></pre>
     </div>
 
@@ -86,8 +87,8 @@
     td.inactive { background-color: #AAAAAA; }
     span.active { color: green; }
     pre { font-size: 0.8em; line-height: 1em; }
-    .string { color: orange; font-weight: bold; }
-    .number { color: darkorange; }
+    .string { color: coral; font-weight: bold; }
+    .number { color: tomato; }
     .boolean { color: darkgray; }
     .boolean.true { color: green; font-weight: bold; }
     .null { color: magenta; }
