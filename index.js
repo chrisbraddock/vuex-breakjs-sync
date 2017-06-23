@@ -5,20 +5,6 @@ exports.breaks = {
     desktop: 1024
 }
 
-// Generate the object that will be stored on the breakpoint module
-function breakpointObj(breakjs) {
-    var breakpoint = {
-        name: breakjs.current()
-    }
-    breakjs.breakpoints.forEach(function(b) {
-        var name = b.name
-        breakpoint['is-' + name] = breakjs.is(name)
-        breakpoint['atLeast-' + name] = breakjs.atLeast(name)
-        breakpoint['atMost-' + name] = breakjs.atMost(name)
-    })
-    return breakpoint
-}
-
 exports.sync = function (store, breakjs, breaks) {
     patchStore(store)
 
@@ -29,14 +15,30 @@ exports.sync = function (store, breakjs, breaks) {
     // value of its init function, hence overwrite it
     breakjs = breakjs(breaks || exports.breaks)
 
-    // Record initial breakpoint
-    commit('breakpoint/BREAKPOINT_CHANGED', breakpointObj(breakjs))
+    function setBreak() {
+        var breakpoint = {
+            breakjs:  breakjs,
+            current:  breakjs.current(),
+            is:       {},
+            atMost:   {},
+            atLeast:  {},
+            lessThan: {},
+        }
 
-    // Record breakpoint on breakpoint change
-    breakjs.addChangeListener(function () {
-        commit('breakpoint/BREAKPOINT_CHANGED', breakpointObj(breakjs))
-    })
+        breakjs.breakpoints.forEach((value, index, array) => {
+            breakpoint.atLeast[value.name] = breakjs.atLeast(value.name)
+            breakpoint.atMost[value.name] = breakjs.atMost(value.name)
+            breakpoint.is[value.name] = value.name === breakpoint.current
+            breakpoint.lessThan[value.name] = !breakjs.atLeast(value.name)
+        })
 
+        commit('breakpoint/BREAKPOINT_CHANGED', breakpoint)
+    }
+
+    // record the initial breakpoint
+    setBreak()
+
+    store.state.breakpoint.breakjs.addChangeListener(setBreak)
 }
 
 function applyMutationState (store, state) {
