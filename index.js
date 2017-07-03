@@ -25,7 +25,7 @@ exports.sync = function (store, breakjs, breaks) {
             lessThan: {},
         }
 
-        breakjs.breakpoints.forEach((value, index, array) => {
+        breakjs.breakpoints.forEach(function (value, index, array) {
             breakpoint.atLeast[value.name] = breakjs.atLeast(value.name)
             breakpoint.atMost[value.name] = breakjs.atMost(value.name)
             breakpoint.is[value.name] = value.name === breakpoint.current
