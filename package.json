@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/chrisbraddock/vuex-breakjs-sync#readme",
   "peerDependencies": {
-    "vuex": "^2.0.0",
+    "vuex": "^2 || ^3",
     "breakjs": "^1.0.0"
   }
 }
