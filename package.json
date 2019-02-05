@@ -1,6 +1,6 @@
 {
   "name": "vuex-breakjs-sync",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Effortlessly keep BreakJS and Vuex Store in sync.",
   "main": "index.js",
   "repository": {
